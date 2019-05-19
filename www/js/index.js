@@ -1,21 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 var app = {
     // Application Constructor
     initialize: function() {
@@ -40,7 +22,55 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
+
+				init_all();
     }
 };
+
+function init_all() {
+	document.body.innerHTML='<div id="cal">cal ...</div><div id="apps">Cargando apps ...</div>';
+	init_cal();
+	init_apps();
+}
+
+function init_cal() {
+	var d0= new Date();
+	var d1= new Date(d0.getTime()+1000000000);
+	window.plugins.calendar.listEventsInRange(d0,d1,mostrar_cal)
+}
+
+function mostrar_cal(eventos) {
+	var s='';
+	for (var i=0; i<eventos.length; i++) { var ev= eventos[i];
+		var ds= new Date(ev.dtstart)
+		var dn= "Su Mo Tu We Th Fr Sa".split(/\s+/)[ds.getDay()]
+		s+= '<div class="ev">'+
+			dn+' '+
+			(ds.getHours()+"").padStart(2,"0")+':'+
+			(ds.getMinutes()+"").padStart(2,"0")+' '+
+			(ds.getMonth()+"").padStart(2,"0")+'/'+
+			(ds.getDate()+"").padStart(2,"0")+' '+
+			ev.title +
+			'</div>';
+	}
+	document.getElementById('cal').innerHTML= s;
+}
+
+function init_apps() {
+	cordova.plugins.AppList.applist(mostrar_apps, x => alert("ERROR: ",x));
+}
+
+function mostrar_apps(apps_kv) {
+	var s= '';
+	var ks= Object.keys(apps_kv).sort( (a,b) => (apps_kv[a]>apps_kv[b] ? -1 : 0) );
+	for (var i=0; i<ks.length; i++) { var k= ks[i];
+		s+= '<a class="app" href="#" onclick="onapp(\''+k+'\')">'+apps_kv[k]+'</a><br>';
+	}
+	document.getElementById('apps').innerHTML= s;
+}
+
+function onapp(k) {
+	cordova.plugins.AppList.appstart(k, x=> console.log("OK",k), x => alert("ERROR: ",x));
+}
 
 app.initialize();
