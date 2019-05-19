@@ -30,7 +30,7 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <plugin name="cordova-plugins-applist" spec="../AppList" />
     <plugin name="cordova-plugin-calendar" spec="^5.1.4" />
     <engine name="android" spec="^7.1.4" />
+    <plugin name="cordova-plugins-applist" spec="https://github.com/podemosaprender/cordova-plugin-applist.git" />
 </widget>
